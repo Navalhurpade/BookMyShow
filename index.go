@@ -3,14 +3,14 @@ package main
 import (
 	"booking-app/helper"
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 func main() {
 	const totalTickets int = 100
 	var remainingTickets uint = uint(totalTickets)
 	var noOfTicketsTOBook uint = 0
-	bookings := []string{}
+	bookings := make([]map[string]string, 0)
 
 	for {
 
@@ -32,23 +32,31 @@ func main() {
 			showValidationMessage(isEmailValid, isFirstNameValid, isLastNameValid)
 		}
 
-		fmt.Printf("\nHow many tikets would you like to book ?")
+		fmt.Printf("\nHow many tikets would you like to book ?\n")
 		fmt.Scan(&noOfTicketsTOBook)
 
 		remainingTickets = bookTicket(noOfTicketsTOBook, remainingTickets)
 
-		bookings = append(bookings, firstName+" "+lastName)
+		//Creating userData map
+		userData := make(map[string]string, 0)
+		userData["firstName"] = firstName
+		userData["lastName"] = lastName
+		userData["email"] = email
+		userData["noOfTicketsBooked"] = strconv.FormatUint(uint64(noOfTicketsTOBook), 10)
+
+		bookings = append(bookings, userData)
 
 		fmt.Printf("Congratulations %v, your tiket has been booked succesfully !\nTikect will be sent to your email %v.\n", firstName, email)
 		firstNameBookings := []string{}
 
-		for _, name := range bookings {
-			firstNameBookings = append(firstNameBookings, strings.Fields(name)[0])
+		for _, user := range bookings {
+			firstNameBookings = append(firstNameBookings, user["firstName"])
 		}
 
 		fmt.Printf("Current bookings %v\n\n", firstNameBookings)
+		fmt.Print(bookings)
 		if remainingTickets < 1 {
-			fmt.Printf("Show has been booked out, come back next year !\nBye bye !")
+			fmt.Printf("Show has been booked out, Please come back next year !\nBye bye !")
 			break
 		}
 	}
